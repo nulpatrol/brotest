@@ -141,6 +141,11 @@ export default class DataTable extends HTMLElement {
             this.div.querySelector('.data-table-wrapper').classList.add('animated');
         });
 
+        this.div.querySelector('.data-table-wrapper').addEventListener('mouseleave', () => {
+            this.div.querySelector('#remove-row-btn').style.visibility = 'hidden';
+            this.div.querySelector('#remove-column-btn').style.visibility = 'hidden';
+        });
+
         this.div.querySelector('#add-row-btn').addEventListener('click', (e) => {
             let row = this.div.querySelector('.table').insertRow(-1);
             for (let i = 0; i < this.columnCount; i += 1) {
