@@ -116,6 +116,14 @@ export default class DataTable extends HTMLElement {
             `translateX(${context.activeColumn * (50 + 4)}px)`;
         context.div.querySelector('.btn.delete.row').style.transform =
             `translateY(${context.activeRow * (50 + 4)}px)`;
+
+        if (this.columnCount > 1) {
+            context.div.querySelector('.btn.delete.column').style.visibility = 'visible';
+        }
+
+        if (this.rowCount > 1) {
+            context.div.querySelector('.btn.delete.row').style.visibility = 'visible';
+        }
     }
 
     connectedCallback() {
@@ -151,6 +159,22 @@ export default class DataTable extends HTMLElement {
                 cell.addEventListener('mouseenter', (e) => { this.mouseEnterCallback(e, this) });
             }
             this.columnCount += 1;
+        });
+
+        this.div.querySelector('#remove-column-btn').addEventListener('click', (e) => {
+            let rows = [].slice.call(this.div.querySelectorAll('.table tr'));
+            for (let i = 0; i < rows.length; i += 1) {
+                rows[i].deleteCell(this.activeColumn);
+            }
+            this.columnCount -= 1;
+            e.currentTarget.style.visibility = 'hidden';
+        });
+
+        this.div.querySelector('#remove-row-btn').addEventListener('click', (e) => {
+            let table = this.div.querySelector('.table');
+            table.deleteRow(this.activeRow);
+            this.rowCount -= 1;
+            e.currentTarget.style.visibility = 'hidden';
         });
     }
 }
