@@ -108,6 +108,8 @@ export default class DataTable extends HTMLElement {
         `;
 
         shadow.appendChild(this.div);
+        this.div.querySelector('#remove-row-btn').style.visibility = 'hidden';
+        this.div.querySelector('#remove-column-btn').style.visibility = 'hidden';
 
         for (let i = 0; i < this.startRowCount; i += 1) {
             this.addRow(this);
