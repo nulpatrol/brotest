@@ -849,6 +849,7 @@ var DataTable = function (_CustomElement2) {
 
         _this.startRowCount = parseInt(_this.getAttribute('row-count')) || 1;
         _this.startColumnCount = parseInt(_this.getAttribute('column-count')) || 1;
+        _this.cellWidth = 50;
 
         _this.rowCount = 0;
         _this.columnCount = _this.startColumnCount;
@@ -871,8 +872,8 @@ var DataTable = function (_CustomElement2) {
             context.activeColumn = e.target.cellIndex;
             context.activeRow = e.target.parentNode.rowIndex;
 
-            context.div.querySelector('.btn.delete.column').style.transform = 'translateX(' + context.activeColumn * (50 + 4) + 'px)';
-            context.div.querySelector('.btn.delete.row').style.transform = 'translateY(' + context.activeRow * (50 + 4) + 'px)';
+            context.div.querySelector('.btn.delete.column').style.transform = 'translateX(' + context.activeColumn * (this.cellWidth + 4) + 'px)';
+            context.div.querySelector('.btn.delete.row').style.transform = 'translateY(' + context.activeRow * (this.cellWidth + 4) + 'px)';
 
             if (this.columnCount > 1) {
                 context.div.querySelector('.btn.delete.column').style.visibility = 'visible';

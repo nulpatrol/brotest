@@ -7,6 +7,7 @@ export default class DataTable extends HTMLElement {
 
         this.startRowCount = parseInt(this.getAttribute('row-count')) || 1;
         this.startColumnCount = parseInt(this.getAttribute('column-count')) || 1;
+        this.cellWidth = 50;
 
         this.rowCount = 0;
         this.columnCount = this.startColumnCount;
@@ -121,9 +122,9 @@ export default class DataTable extends HTMLElement {
         context.activeRow = e.target.parentNode.rowIndex;
 
         context.div.querySelector('.btn.delete.column').style.transform =
-            `translateX(${context.activeColumn * (50 + 4)}px)`;
+            `translateX(${context.activeColumn * (this.cellWidth + 4)}px)`;
         context.div.querySelector('.btn.delete.row').style.transform =
-            `translateY(${context.activeRow * (50 + 4)}px)`;
+            `translateY(${context.activeRow * (this.cellWidth + 4)}px)`;
 
         if (this.columnCount > 1) {
             context.div.querySelector('.btn.delete.column').style.visibility = 'visible';
