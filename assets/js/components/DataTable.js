@@ -4,8 +4,12 @@ export default class DataTable extends HTMLElement {
         const shadow = this.attachShadow({mode: 'open'});
 
         this.div = document.createElement('div');
-        this.rowCount = 1;
-        this.columnCount = 1;
+
+        this.startRowCount = parseInt(this.getAttribute('row-count')) || 1;
+        this.startColumnCount = parseInt(this.getAttribute('column-count')) || 1;
+
+        this.rowCount = 0;
+        this.columnCount = this.startColumnCount;
 
         this.div.innerHTML = `
             <style>
@@ -90,9 +94,7 @@ export default class DataTable extends HTMLElement {
                     <td class="btn-cell"><button id="remove-row-btn" class="btn delete row"><span>-</span></button></td>
                     <td>
                         <table class="table">
-                            <tr>
-                                <td>[0, 0]</td>
-                            </tr>
+                            
                         </table>
                     </td>
                     <td class="btn-cell"><button id="add-column-btn" class="btn add column"><span>+</span></button></td>
@@ -106,6 +108,10 @@ export default class DataTable extends HTMLElement {
         `;
 
         shadow.appendChild(this.div);
+
+        for (let i = 0; i < this.startRowCount; i += 1) {
+            this.addRow(this);
+        }
     }
 
     mouseEnterCallback(e, context) {
@@ -126,13 +132,27 @@ export default class DataTable extends HTMLElement {
         }
     }
 
+    addRow(context) {
+        let row = context.div.querySelector('.table').insertRow(-1);
+        for (let i = 0; i < context.columnCount; i += 1) {
+            let cell = row.insertCell(-1);
+            cell.innerHTML = `[${context.rowCount}, ${i}]`;
+            cell.addEventListener('mouseenter', (e) => { context.mouseEnterCallback(e, context) });
+        }
+        context.rowCount += 1;
+    }
+
+    addColumn(context) {
+        let rows = [].slice.call(context.div.querySelectorAll('.table tr'));
+        for (let i = 0; i < rows.length; i += 1) {
+            let cell = rows[i].insertCell(-1);
+            cell.innerHTML = `[${i}, ${context.columnCount}]`;
+            cell.addEventListener('mouseenter', (e) => { context.mouseEnterCallback(e, context) });
+        }
+        this.columnCount += 1;
+    }
+
     connectedCallback() {
-        let cells = [].slice.call(this.div.querySelectorAll('.table td'));
-
-        cells.forEach((cell) => {
-            cell.addEventListener('mouseenter', (e) => { this.mouseEnterCallback(e, this) });
-        });
-
         this.div.querySelector('.table').addEventListener('mouseleave', (e) => {
             this.div.querySelector('.data-table-wrapper').classList.remove('animated');
         });
@@ -146,24 +166,12 @@ export default class DataTable extends HTMLElement {
             this.div.querySelector('#remove-column-btn').style.visibility = 'hidden';
         });
 
-        this.div.querySelector('#add-row-btn').addEventListener('click', (e) => {
-            let row = this.div.querySelector('.table').insertRow(-1);
-            for (let i = 0; i < this.columnCount; i += 1) {
-                let cell = row.insertCell(-1);
-                cell.innerHTML = `[${this.rowCount}, ${i}]`;
-                cell.addEventListener('mouseenter', (e) => { this.mouseEnterCallback(e, this) });
-            }
-            this.rowCount += 1;
+        this.div.querySelector('#add-row-btn').addEventListener('click', () => {
+            this.addRow(this);
         });
 
-        this.div.querySelector('#add-column-btn').addEventListener('click', (e) => {
-            let rows = [].slice.call(this.div.querySelectorAll('.table tr'));
-            for (let i = 0; i < rows.length; i += 1) {
-                let cell = rows[i].insertCell(-1);
-                cell.innerHTML = `[${this.columnCount}, ${i}]`;
-                cell.addEventListener('mouseenter', (e) => { this.mouseEnterCallback(e, this) });
-            }
-            this.columnCount += 1;
+        this.div.querySelector('#add-column-btn').addEventListener('click', () => {
+            this.addColumn(this);
         });
 
         this.div.querySelector('#remove-column-btn').addEventListener('click', (e) => {
