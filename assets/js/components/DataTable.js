@@ -4,8 +4,8 @@ export default class DataTable extends HTMLElement {
         const shadow = this.attachShadow({mode: 'open'});
 
         this.div = document.createElement('div');
-        this.rowCount = 4;
-        this.columnCount = 4;
+        this.rowCount = 1;
+        this.columnCount = 1;
 
         this.div.innerHTML = `
             <style>
@@ -131,6 +131,26 @@ export default class DataTable extends HTMLElement {
 
         this.div.querySelector('.table').addEventListener('mouseenter', (e) => {
             this.div.querySelector('.data-table-wrapper').classList.add('animated');
+        });
+
+        this.div.querySelector('#add-row-btn').addEventListener('click', (e) => {
+            let row = this.div.querySelector('.table').insertRow(-1);
+            for (let i = 0; i < this.columnCount; i += 1) {
+                let cell = row.insertCell(-1);
+                cell.innerHTML = `[${this.rowCount}, ${i}]`;
+                cell.addEventListener('mouseenter', (e) => { this.mouseEnterCallback(e, this) });
+            }
+            this.rowCount += 1;
+        });
+
+        this.div.querySelector('#add-column-btn').addEventListener('click', (e) => {
+            let rows = [].slice.call(this.div.querySelectorAll('.table tr'));
+            for (let i = 0; i < rows.length; i += 1) {
+                let cell = rows[i].insertCell(-1);
+                cell.innerHTML = `[${this.columnCount}, ${i}]`;
+                cell.addEventListener('mouseenter', (e) => { this.mouseEnterCallback(e, this) });
+            }
+            this.columnCount += 1;
         });
     }
 }
