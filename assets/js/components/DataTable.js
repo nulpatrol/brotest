@@ -9,6 +9,10 @@ export default class DataTable extends HTMLElement {
 
         this.div.innerHTML = `
             <style>
+                .animated .btn {
+                  -webkit-transition: 0.5s ease-out;
+                  transition: 0.5s ease-out;
+                }
                 .btn {
                   width: 50px;
                   height: 50px;
@@ -119,6 +123,14 @@ export default class DataTable extends HTMLElement {
 
         cells.forEach((cell) => {
             cell.addEventListener('mouseenter', (e) => { this.mouseEnterCallback(e, this) });
+        });
+
+        this.div.querySelector('.table').addEventListener('mouseleave', (e) => {
+            this.div.querySelector('.data-table-wrapper').classList.remove('animated');
+        });
+
+        this.div.querySelector('.table').addEventListener('mouseenter', (e) => {
+            this.div.querySelector('.data-table-wrapper').classList.add('animated');
         });
     }
 }
