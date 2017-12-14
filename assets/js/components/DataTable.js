@@ -103,4 +103,22 @@ export default class DataTable extends HTMLElement {
 
         shadow.appendChild(this.div);
     }
+
+    mouseEnterCallback(e, context) {
+        context.activeColumn = e.target.cellIndex;
+        context.activeRow = e.target.parentNode.rowIndex;
+
+        context.div.querySelector('.btn.delete.column').style.transform =
+            `translateX(${context.activeColumn * (50 + 4)}px)`;
+        context.div.querySelector('.btn.delete.row').style.transform =
+            `translateY(${context.activeRow * (50 + 4)}px)`;
+    }
+
+    connectedCallback() {
+        let cells = [].slice.call(this.div.querySelectorAll('.table td'));
+
+        cells.forEach((cell) => {
+            cell.addEventListener('mouseenter', (e) => { this.mouseEnterCallback(e, this) });
+        });
+    }
 }
