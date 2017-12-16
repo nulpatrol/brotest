@@ -117,44 +117,60 @@ export default class DataTable extends HTMLElement {
         this.div.querySelector('.btn.delete.column').style.visibility = 'hidden';
 
         for (let i = 0; i < this.startRowCount; i += 1) {
-            this.addRow(this);
+            this.addRow();
         }
     }
 
-    mouseEnterCallback(e, context) {
-        context.activeColumn = e.target.cellIndex;
-        context.activeRow = e.target.parentNode.rowIndex;
+    mouseEnterCallback(e) {
+        this.activeColumn = e.target.cellIndex;
+        this.activeRow = e.target.parentNode.rowIndex;
 
-        context.div.querySelector('.btn.delete.column').style.transform =
-            `translateX(${context.activeColumn * (this.cellWidth + 4)}px)`;
-        context.div.querySelector('.btn.delete.row').style.transform =
-            `translateY(${context.activeRow * (this.cellWidth + 4)}px)`;
+        this.div.querySelector('.btn.delete.column').style.transform =
+            `translateX(${this.activeColumn * (this.cellWidth + 4)}px)`;
+        this.div.querySelector('.btn.delete.row').style.transform =
+            `translateY(${this.activeRow * (this.cellWidth + 4)}px)`;
 
         if (this.columnCount > 1) {
-            context.div.querySelector('.btn.delete.column').style.visibility = 'visible';
+            this.div.querySelector('.btn.delete.column').style.visibility = 'visible';
         }
 
         if (this.rowCount > 1) {
-            context.div.querySelector('.btn.delete.row').style.visibility = 'visible';
+            this.div.querySelector('.btn.delete.row').style.visibility = 'visible';
         }
     }
 
-    addRow(context) {
-        let row = context.div.querySelector('.table').insertRow(-1);
-        for (let i = 0; i < context.columnCount; i += 1) {
-            let cell = row.insertCell(-1);
-            cell.innerHTML = `[${context.rowCount}, ${i}]`;
-            cell.addEventListener('mouseenter', (e) => { context.mouseEnterCallback(e, context) });
-        }
-        context.rowCount += 1;
-    }
-
-    addColumn(context) {
-        let rows = [].slice.call(context.div.querySelectorAll('.table tr'));
+    removeColumn(e) {
+        const rows = [].slice.call(this.div.querySelectorAll('.table tr'));
         for (let i = 0; i < rows.length; i += 1) {
-            let cell = rows[i].insertCell(-1);
-            cell.innerHTML = `[${i}, ${context.columnCount}]`;
-            cell.addEventListener('mouseenter', (e) => { context.mouseEnterCallback(e, context) });
+            rows[i].deleteCell(this.activeColumn);
+        }
+        this.columnCount -= 1;
+        e.currentTarget.style.visibility = 'hidden';
+    }
+
+    removeRow(e) {
+        const table = this.div.querySelector('.table');
+        table.deleteRow(this.activeRow);
+        this.rowCount -= 1;
+        e.currentTarget.style.visibility = 'hidden';
+    }
+
+    addRow() {
+        const row = this.div.querySelector('.table').insertRow(-1);
+        for (let i = 0; i < this.columnCount; i += 1) {
+            const cell = row.insertCell(-1);
+            cell.innerHTML = `[${this.rowCount}, ${i}]`;
+            cell.addEventListener('mouseenter', this.mouseEnterCallback.bind(this));
+        }
+        this.rowCount += 1;
+    }
+
+    addColumn() {
+        const rows = [].slice.call(this.div.querySelectorAll('.table tr'));
+        for (let i = 0; i < rows.length; i += 1) {
+            const cell = rows[i].insertCell(-1);
+            cell.innerHTML = `[${i}, ${this.columnCount}]`;
+            cell.addEventListener('mouseenter', this.mouseEnterCallback.bind(this));
         }
         this.columnCount += 1;
     }
@@ -173,28 +189,16 @@ export default class DataTable extends HTMLElement {
             this.div.querySelector('#remove-column-btn').style.visibility = 'hidden';
         });
 
-        this.div.querySelector('#add-row-btn').addEventListener('click', () => {
-            this.addRow(this);
-        });
+        this.div.querySelector('.btn.add.row')
+            .addEventListener('click', this.addRow.bind(this));
 
-        this.div.querySelector('#add-column-btn').addEventListener('click', () => {
-            this.addColumn(this);
-        });
+        this.div.querySelector('.btn.add.column')
+            .addEventListener('click', this.addColumn.bind(this));
 
-        this.div.querySelector('#remove-column-btn').addEventListener('click', (e) => {
-            let rows = [].slice.call(this.div.querySelectorAll('.table tr'));
-            for (let i = 0; i < rows.length; i += 1) {
-                rows[i].deleteCell(this.activeColumn);
-            }
-            this.columnCount -= 1;
-            e.currentTarget.style.visibility = 'hidden';
-        });
+        this.div.querySelector('.btn.delete.column')
+            .addEventListener('click', this.removeColumn.bind(this));
 
-        this.div.querySelector('#remove-row-btn').addEventListener('click', (e) => {
-            let table = this.div.querySelector('.table');
-            table.deleteRow(this.activeRow);
-            this.rowCount -= 1;
-            e.currentTarget.style.visibility = 'hidden';
-        });
+        this.div.querySelector('.btn.delete.row')
+            .addEventListener('click', this.removeRow.bind(this));
     }
 }

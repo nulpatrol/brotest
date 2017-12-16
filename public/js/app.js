@@ -847,65 +847,79 @@ var DataTable = function (_CustomElement2) {
 
         _this.div = document.createElement('div');
 
-        _this.startRowCount = parseInt(_this.getAttribute('row-count')) || 1;
-        _this.startColumnCount = parseInt(_this.getAttribute('column-count')) || 1;
+        _this.startRowCount = parseInt(_this.getAttribute('row-count'), 10) || 1;
+        _this.startColumnCount = parseInt(_this.getAttribute('column-count'), 10) || 1;
         _this.cellWidth = 50;
 
         _this.rowCount = 0;
         _this.columnCount = _this.startColumnCount;
 
-        _this.div.innerHTML = '\n            <style>\n                .animated .btn {\n                  -webkit-transition: 0.5s ease-out;\n                  transition: 0.5s ease-out;\n                }\n                .btn {\n                  width: 50px;\n                  height: 50px;\n                  border: none;\n                  color: #fff;\n                  -webkit-transition: background-color 1s ease-out;\n                  transition: background-color 1s ease-out;\n                }\n                \n                .btn span {\n                  font-size: 20px;\n                  line-height: 1;\n                }\n                \n                .btn.delete {\n                  background: #b00000;\n                }\n                \n                .btn.delete.row {\n                  margin-top: 3px;\n                  margin-right: -2px;\n                }\n                \n                .btn.delete.column {\n                  margin-bottom: -2px;\n                  margin-left: 3px;\n                }\n                \n                .btn.delete:hover {\n                  background: #c64e4d;\n                }\n                \n                .btn.add {\n                  background: #f5a214;\n                }\n                \n                .btn.add.row {\n                  margin-left: 3px;\n                  margin-top: -2px;\n                }\n                \n                .btn.add.column {\n                  margin-left: -2px;\n                  margin-top: 3px;\n                }\n                \n                .btn.add:hover {\n                  background: #f5c24f;\n                }\n                \n                .table {\n                  border: 1px #4cabe3 solid;\n                  text-align: center;\n                }\n                \n                .table td {\n                  background-color: #4cabe3;\n                  width: 50px;\n                  height: 50px;\n                  color: white;\n                  font-size: 12px;\n                }\n                \n                .btn-cell {\n                  vertical-align: top;\n                }\n            </style>\n            <table class="data-table-wrapper">\n                <tr>\n                    <td></td>\n                    <td class="btn-cell"><button id="remove-column-btn" class="btn delete column"><span>-</span></button></td>\n                    <td></td>\n                </tr>\n                <tr>\n                    <td class="btn-cell"><button id="remove-row-btn" class="btn delete row"><span>-</span></button></td>\n                    <td>\n                        <table class="table">\n                            \n                        </table>\n                    </td>\n                    <td class="btn-cell"><button id="add-column-btn" class="btn add column"><span>+</span></button></td>\n                </tr>\n                <tr>\n                    <td></td>\n                    <td class="btn-cell"><button id="add-row-btn" class="btn add row"><span>+</span></button></td>\n                    <td></td>\n                </tr>\n            </table>\n        ';
+        _this.div.innerHTML = '\n            <style>\n               .main {\n                  display: flex;\n                }\n                \n                .left-col {\n                  padding-right: 2px;\n                  padding-top: 4px;\n                  position: relative;\n                }\n                \n                .right-col {\n                  padding-top: 4px;\n                  padding-left: 2px;\n                }\n                \n                .table-footer {\n                  padding-left: 54px;\n                  padding-top: 2px;\n                }\n                \n                .table-head {\n                  padding-left: 56px;\n                  padding-bottom: 2px;\n                  position: relative;\n                }\n                \n                .animated .btn {\n                  -webkit-transition: 0.5s ease-out;\n                  transition: 0.5s ease-out;\n                }\n                \n                .btn {\n                  width: 50px;\n                  height: 50px;\n                  border: none;\n                  color: #fff;\n                  -webkit-transition: background-color 1s ease-out;\n                  transition: background-color 1s ease-out;\n                }\n                \n                .btn span {\n                  font-size: 20px;\n                  line-height: 1;\n                }\n                \n                .btn.delete {\n                  background: #b00000;\n                }\n                \n                .btn.delete:hover {\n                  background: #c64e4d;\n                }\n                \n                .btn.add {\n                  background: #f5a214;\n                }\n                \n                .btn.add:hover {\n                  background: #f5c24f;\n                }\n                \n                .table {\n                  border: 1px #4cabe3 solid;\n                  text-align: center;\n                }\n                \n                .table td {\n                  background-color: #4cabe3;\n                  width: 50px;\n                  height: 50px;\n                  color: white;\n                  font-size: 12px;\n                }\n                \n                .btn-cell {\n                  vertical-align: top;\n                }\n            </style>\n            <div class="table-wrapper">\n                <div class="table-head">\n                    <button class="btn delete column"><span>-</span></button>\n                </div>\n            \n                <div class="main">\n                    <div class="left-col">\n                        <button class="btn delete row"><span>-</span></button>\n                    </div>\n                    <table class="table"></table>\n                    <div class="right-col">\n                        <button class="btn add column"><span>+</span></button>\n                    </div>\n                </div>\n                <div class="table-footer">\n                    <button class="btn add row"><span>+</span></button>\n                </div>\n            </div>\n        ';
 
         shadow.appendChild(_this.div);
-        _this.div.querySelector('#remove-row-btn').style.visibility = 'hidden';
-        _this.div.querySelector('#remove-column-btn').style.visibility = 'hidden';
+        _this.div.querySelector('.btn.delete.row').style.visibility = 'hidden';
+        _this.div.querySelector('.btn.delete.column').style.visibility = 'hidden';
 
         for (var i = 0; i < _this.startRowCount; i += 1) {
-            _this.addRow(_this);
+            _this.addRow();
         }
         return _this;
     }
 
     (0, _createClass3.default)(DataTable, [{
         key: 'mouseEnterCallback',
-        value: function mouseEnterCallback(e, context) {
-            context.activeColumn = e.target.cellIndex;
-            context.activeRow = e.target.parentNode.rowIndex;
+        value: function mouseEnterCallback(e) {
+            this.activeColumn = e.target.cellIndex;
+            this.activeRow = e.target.parentNode.rowIndex;
 
-            context.div.querySelector('.btn.delete.column').style.transform = 'translateX(' + context.activeColumn * (this.cellWidth + 4) + 'px)';
-            context.div.querySelector('.btn.delete.row').style.transform = 'translateY(' + context.activeRow * (this.cellWidth + 4) + 'px)';
+            this.div.querySelector('.btn.delete.column').style.transform = 'translateX(' + this.activeColumn * (this.cellWidth + 4) + 'px)';
+            this.div.querySelector('.btn.delete.row').style.transform = 'translateY(' + this.activeRow * (this.cellWidth + 4) + 'px)';
 
             if (this.columnCount > 1) {
-                context.div.querySelector('.btn.delete.column').style.visibility = 'visible';
+                this.div.querySelector('.btn.delete.column').style.visibility = 'visible';
             }
 
             if (this.rowCount > 1) {
-                context.div.querySelector('.btn.delete.row').style.visibility = 'visible';
+                this.div.querySelector('.btn.delete.row').style.visibility = 'visible';
             }
+        }
+    }, {
+        key: 'removeColumn',
+        value: function removeColumn(e) {
+            var rows = [].slice.call(this.div.querySelectorAll('.table tr'));
+            for (var i = 0; i < rows.length; i += 1) {
+                rows[i].deleteCell(this.activeColumn);
+            }
+            this.columnCount -= 1;
+            e.currentTarget.style.visibility = 'hidden';
+        }
+    }, {
+        key: 'removeRow',
+        value: function removeRow(e) {
+            var table = this.div.querySelector('.table');
+            table.deleteRow(this.activeRow);
+            this.rowCount -= 1;
+            e.currentTarget.style.visibility = 'hidden';
         }
     }, {
         key: 'addRow',
-        value: function addRow(context) {
-            var row = context.div.querySelector('.table').insertRow(-1);
-            for (var i = 0; i < context.columnCount; i += 1) {
+        value: function addRow() {
+            var row = this.div.querySelector('.table').insertRow(-1);
+            for (var i = 0; i < this.columnCount; i += 1) {
                 var cell = row.insertCell(-1);
-                cell.innerHTML = '[' + context.rowCount + ', ' + i + ']';
-                cell.addEventListener('mouseenter', function (e) {
-                    context.mouseEnterCallback(e, context);
-                });
+                cell.innerHTML = '[' + this.rowCount + ', ' + i + ']';
+                cell.addEventListener('mouseenter', this.mouseEnterCallback.bind(this));
             }
-            context.rowCount += 1;
+            this.rowCount += 1;
         }
     }, {
         key: 'addColumn',
-        value: function addColumn(context) {
-            var rows = [].slice.call(context.div.querySelectorAll('.table tr'));
+        value: function addColumn() {
+            var rows = [].slice.call(this.div.querySelectorAll('.table tr'));
             for (var i = 0; i < rows.length; i += 1) {
                 var cell = rows[i].insertCell(-1);
-                cell.innerHTML = '[' + i + ', ' + context.columnCount + ']';
-                cell.addEventListener('mouseenter', function (e) {
-                    context.mouseEnterCallback(e, context);
-                });
+                cell.innerHTML = '[' + i + ', ' + this.columnCount + ']';
+                cell.addEventListener('mouseenter', this.mouseEnterCallback.bind(this));
             }
             this.columnCount += 1;
         }
@@ -927,29 +941,13 @@ var DataTable = function (_CustomElement2) {
                 _this2.div.querySelector('#remove-column-btn').style.visibility = 'hidden';
             });
 
-            this.div.querySelector('#add-row-btn').addEventListener('click', function () {
-                _this2.addRow(_this2);
-            });
+            this.div.querySelector('.btn.add.row').addEventListener('click', this.addRow.bind(this));
 
-            this.div.querySelector('#add-column-btn').addEventListener('click', function () {
-                _this2.addColumn(_this2);
-            });
+            this.div.querySelector('.btn.add.column').addEventListener('click', this.addColumn.bind(this));
 
-            this.div.querySelector('#remove-column-btn').addEventListener('click', function (e) {
-                var rows = [].slice.call(_this2.div.querySelectorAll('.table tr'));
-                for (var i = 0; i < rows.length; i += 1) {
-                    rows[i].deleteCell(_this2.activeColumn);
-                }
-                _this2.columnCount -= 1;
-                e.currentTarget.style.visibility = 'hidden';
-            });
+            this.div.querySelector('.btn.delete.column').addEventListener('click', this.removeColumn.bind(this));
 
-            this.div.querySelector('#remove-row-btn').addEventListener('click', function (e) {
-                var table = _this2.div.querySelector('.table');
-                table.deleteRow(_this2.activeRow);
-                _this2.rowCount -= 1;
-                e.currentTarget.style.visibility = 'hidden';
-            });
+            this.div.querySelector('.btn.delete.row').addEventListener('click', this.removeRow.bind(this));
         }
     }]);
     return DataTable;
