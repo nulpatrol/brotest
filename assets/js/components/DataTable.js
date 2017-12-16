@@ -14,10 +14,37 @@ export default class DataTable extends HTMLElement {
 
         this.div.innerHTML = `
             <style>
+               .main {
+                  display: flex;
+                }
+                
+                .left-col {
+                  padding-right: 2px;
+                  padding-top: 4px;
+                  position: relative;
+                }
+                
+                .right-col {
+                  padding-top: 4px;
+                  padding-left: 2px;
+                }
+                
+                .table-footer {
+                  padding-left: 54px;
+                  padding-top: 2px;
+                }
+                
+                .table-head {
+                  padding-left: 56px;
+                  padding-bottom: 2px;
+                  position: relative;
+                }
+                
                 .animated .btn {
                   -webkit-transition: 0.5s ease-out;
                   transition: 0.5s ease-out;
                 }
+                
                 .btn {
                   width: 50px;
                   height: 50px;
@@ -36,32 +63,12 @@ export default class DataTable extends HTMLElement {
                   background: #b00000;
                 }
                 
-                .btn.delete.row {
-                  margin-top: 3px;
-                  margin-right: -2px;
-                }
-                
-                .btn.delete.column {
-                  margin-bottom: -2px;
-                  margin-left: 3px;
-                }
-                
                 .btn.delete:hover {
                   background: #c64e4d;
                 }
                 
                 .btn.add {
                   background: #f5a214;
-                }
-                
-                .btn.add.row {
-                  margin-left: 3px;
-                  margin-top: -2px;
-                }
-                
-                .btn.add.column {
-                  margin-left: -2px;
-                  margin-top: 3px;
                 }
                 
                 .btn.add:hover {
@@ -85,32 +92,29 @@ export default class DataTable extends HTMLElement {
                   vertical-align: top;
                 }
             </style>
-            <table class="data-table-wrapper">
-                <tr>
-                    <td></td>
-                    <td class="btn-cell"><button id="remove-column-btn" class="btn delete column"><span>-</span></button></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="btn-cell"><button id="remove-row-btn" class="btn delete row"><span>-</span></button></td>
-                    <td>
-                        <table class="table">
-                            
-                        </table>
-                    </td>
-                    <td class="btn-cell"><button id="add-column-btn" class="btn add column"><span>+</span></button></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td class="btn-cell"><button id="add-row-btn" class="btn add row"><span>+</span></button></td>
-                    <td></td>
-                </tr>
-            </table>
+            <div class="table-wrapper">
+                <div class="table-head">
+                    <button class="btn delete column"><span>-</span></button>
+                </div>
+            
+                <div class="main">
+                    <div class="left-col">
+                        <button class="btn delete row"><span>-</span></button>
+                    </div>
+                    <table class="table"></table>
+                    <div class="right-col">
+                        <button class="btn add column"><span>+</span></button>
+                    </div>
+                </div>
+                <div class="table-footer">
+                    <button class="btn add row"><span>+</span></button>
+                </div>
+            </div>
         `;
 
         shadow.appendChild(this.div);
-        this.div.querySelector('#remove-row-btn').style.visibility = 'hidden';
-        this.div.querySelector('#remove-column-btn').style.visibility = 'hidden';
+        this.div.querySelector('.btn.delete.row').style.visibility = 'hidden';
+        this.div.querySelector('.btn.delete.column').style.visibility = 'hidden';
 
         for (let i = 0; i < this.startRowCount; i += 1) {
             this.addRow(this);
