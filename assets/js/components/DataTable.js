@@ -1,12 +1,12 @@
 export default class DataTable extends HTMLElement {
     constructor() {
         super();
-        const shadow = this.attachShadow({mode: 'open'});
+        const shadow = this.attachShadow({ mode: 'open' });
 
         this.div = document.createElement('div');
 
-        this.startRowCount = parseInt(this.getAttribute('row-count')) || 1;
-        this.startColumnCount = parseInt(this.getAttribute('column-count')) || 1;
+        this.startRowCount = parseInt(this.getAttribute('row-count'), 10) || 1;
+        this.startColumnCount = parseInt(this.getAttribute('column-count'), 10) || 1;
         this.cellWidth = 50;
 
         this.rowCount = 0;
