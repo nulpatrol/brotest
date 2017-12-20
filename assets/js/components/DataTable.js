@@ -103,29 +103,38 @@ export default class DataTable extends HTMLElement {
         `;
 
         shadow.appendChild(this.div);
-        this.div.querySelector('.btn.delete.row').style.visibility = 'hidden';
-        this.div.querySelector('.btn.delete.column').style.visibility = 'hidden';
+        this.btnDeleteColumn = this.div.querySelector('.btn.delete.column');
+        this.btnDeleteRow = this.div.querySelector('.btn.delete.row');
+        this.btnAddColumn = this.div.querySelector('.btn.add.column');
+        this.btnAddRow = this.div.querySelector('.btn.add.row');
+        this.table = this.div.querySelector('.table');
+
+        this.btnDeleteRow.style.visibility = 'hidden';
+        this.btnDeleteColumn.style.visibility = 'hidden';
 
         for (let i = 0; i < this.startRowCount; i += 1) {
             this.addRow();
         }
+
+        this.table.addEventListener('mousemove', this.mouseEnterCallback.bind(this));
     }
 
     mouseEnterCallback(e) {
+        if (e.target === e.currentTarget) {
+            return;
+        }
+
         this.activeColumn = e.target.cellIndex;
         this.activeRow = e.target.parentNode.rowIndex;
-
-        this.div.querySelector('.btn.delete.column').style.transform =
-            `translateX(${this.activeColumn * (this.cellWidth + 4)}px)`;
-        this.div.querySelector('.btn.delete.row').style.transform =
-            `translateY(${this.activeRow * (this.cellWidth + 4)}px)`;
+        this.btnDeleteColumn.style.left = `${e.target.offsetLeft}px`;
+        this.btnDeleteRow.style.top = `${e.target.offsetTop}px`;
 
         if (this.columnCount > 1) {
-            this.div.querySelector('.btn.delete.column').style.visibility = 'visible';
+            this.btnDeleteColumn.style.visibility = 'visible';
         }
 
         if (this.rowCount > 1) {
-            this.div.querySelector('.btn.delete.row').style.visibility = 'visible';
+            this.btnDeleteRow.style.visibility = 'visible';
         }
     }
 
@@ -146,11 +155,10 @@ export default class DataTable extends HTMLElement {
     }
 
     addRow() {
-        const row = this.div.querySelector('.table').insertRow(-1);
+        const row = this.table.insertRow(-1);
         for (let i = 0; i < this.columnCount; i += 1) {
             const cell = row.insertCell(-1);
             cell.innerHTML = `[${this.rowCount}, ${i}]`;
-            cell.addEventListener('mouseenter', this.mouseEnterCallback.bind(this));
         }
         this.rowCount += 1;
     }
@@ -160,35 +168,35 @@ export default class DataTable extends HTMLElement {
         for (let i = 0; i < rows.length; i += 1) {
             const cell = rows[i].insertCell(-1);
             cell.innerHTML = `[${i}, ${this.columnCount}]`;
-            cell.addEventListener('mouseenter', this.mouseEnterCallback.bind(this));
         }
         this.columnCount += 1;
     }
 
     connectedCallback() {
-        this.div.querySelector('.table').addEventListener('mouseleave', (e) => {
-            this.div.querySelector('.data-table-wrapper').classList.remove('animated');
+        this.table.addEventListener('mouseleave', (e) => {
+            if (!e.relatedTarget.classList.contains('delete')) {
+                this.btnDeleteRow.style.visibility = 'hidden';
+                this.btnDeleteColumn.style.visibility = 'hidden';
+            } else if (e.relatedTarget.classList.contains('column')) {
+                this.btnDeleteRow.style.visibility = 'hidden';
+            } else if (e.relatedTarget.classList.contains('row')) {
+                this.btnDeleteColumn.style.visibility = 'hidden';
+            }
         });
 
-        this.div.querySelector('.table').addEventListener('mouseenter', (e) => {
-            this.div.querySelector('.data-table-wrapper').classList.add('animated');
+        this.btnAddRow.addEventListener('click', this.addRow.bind(this));
+        this.btnAddColumn.addEventListener('click', this.addColumn.bind(this));
+
+        this.btnDeleteColumn.addEventListener('click', this.removeColumn.bind(this));
+        this.btnDeleteColumn.addEventListener('mouseleave', () => {
+            this.btnDeleteColumn.style.visibility = 'hidden';
+            this.btnDeleteRow.style.visibility = 'hidden';
         });
 
-        this.div.querySelector('.data-table-wrapper').addEventListener('mouseleave', () => {
-            this.div.querySelector('#remove-row-btn').style.visibility = 'hidden';
-            this.div.querySelector('#remove-column-btn').style.visibility = 'hidden';
+        this.btnDeleteRow.addEventListener('click', this.removeRow.bind(this));
+        this.btnDeleteRow.addEventListener('mouseleave', () => {
+            this.btnDeleteColumn.style.visibility = 'hidden';
+            this.btnDeleteRow.style.visibility = 'hidden';
         });
-
-        this.div.querySelector('.btn.add.row')
-            .addEventListener('click', this.addRow.bind(this));
-
-        this.div.querySelector('.btn.add.column')
-            .addEventListener('click', this.addColumn.bind(this));
-
-        this.div.querySelector('.btn.delete.column')
-            .addEventListener('click', this.removeColumn.bind(this));
-
-        this.div.querySelector('.btn.delete.row')
-            .addEventListener('click', this.removeRow.bind(this));
     }
 }
