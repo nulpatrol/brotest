@@ -7,21 +7,20 @@ export default class DataTable extends HTMLElement {
 
         this.startRowCount = parseInt(this.getAttribute('row-count'), 10) || 1;
         this.startColumnCount = parseInt(this.getAttribute('column-count'), 10) || 1;
-        this.cellWidth = 50;
 
         this.rowCount = 0;
         this.columnCount = this.startColumnCount;
 
         this.div.innerHTML = `
             <style>
+                
                .main {
                   display: flex;
                 }
                 
                 .left-col {
                   padding-right: 2px;
-                  padding-top: 4px;
-                  position: relative;
+                  padding-top: 2px;
                 }
                 
                 .right-col {
@@ -35,9 +34,8 @@ export default class DataTable extends HTMLElement {
                 }
                 
                 .table-head {
-                  padding-left: 56px;
+                  padding-left: 54px;
                   padding-bottom: 2px;
-                  position: relative;
                 }
                 
                 .animated .btn {
@@ -50,17 +48,14 @@ export default class DataTable extends HTMLElement {
                   height: 50px;
                   border: none;
                   color: #fff;
+                  font-size: 20px;
                   -webkit-transition: background-color 1s ease-out;
                   transition: background-color 1s ease-out;
                 }
                 
-                .btn span {
-                  font-size: 20px;
-                  line-height: 1;
-                }
-                
                 .btn.delete {
                   background: #b00000;
+                  position: relative;
                 }
                 
                 .btn.delete:hover {
@@ -87,27 +82,22 @@ export default class DataTable extends HTMLElement {
                   color: white;
                   font-size: 12px;
                 }
-                
-                .btn-cell {
-                  vertical-align: top;
-                }
             </style>
-            <div class="table-wrapper">
+            <div class="table-wrapper animated">
                 <div class="table-head">
-                    <button class="btn delete column"><span>-</span></button>
+                    <button class="btn delete column">-</button>
                 </div>
-            
                 <div class="main">
                     <div class="left-col">
-                        <button class="btn delete row"><span>-</span></button>
+                        <button class="btn delete row">-</button>
                     </div>
                     <table class="table"></table>
                     <div class="right-col">
-                        <button class="btn add column"><span>+</span></button>
+                        <button class="btn add column">+</button>
                     </div>
                 </div>
                 <div class="table-footer">
-                    <button class="btn add row"><span>+</span></button>
+                    <button class="btn add row">+</button>
                 </div>
             </div>
         `;
